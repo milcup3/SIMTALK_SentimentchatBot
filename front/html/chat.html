@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>여행 상담 채팅 (로컬)</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/chat.css">
+  <style>
+    .container.chat-layout {
+      background: rgba(255,255,255,0.55);
+      box-shadow: 0 12px 48px rgba(64,144,255,0.10), 0 1.5px 8px rgba(80,100,120,0.10);
+      border-radius: 28px;
+      backdrop-filter: blur(9px);
+      padding: 38px 30px 24px 30px;
+      width: 400px;
+      min-height: 600px;
+      margin-top: 60px;
+    }
+    #chat-container { transition: margin-right 0.5s cubic-bezier(.61,-0.15,.38,1.28); }
+    .chat-btn {
+      background: linear-gradient(120deg, #22a1c8 40%, #70a6c4 100%);
+      color: #fff; font-weight: bold; font-size: 18px;
+      padding: 10px 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(80,200,255,0.09);
+      transition: transform 0.13s, background 0.2s; border: none; cursor: pointer;
+    }
+    .chat-btn:hover { background: linear-gradient(120deg, #1d7ca5 40%, #22a1c8 100%); transform: scale(1.05); }
+    .message.notice { color: #2b6cb0; font-weight: 600; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container chat-layout" id="chat-container">
+    <div id="chat-box" class="chat-box"></div>
+    <div class="input-area">
+      <input type="text" id="chat-input" placeholder="메시지를 입력하세요..." />
+      <button id="send-btn" class="chat-btn">전송</button>
+    </div>
+  </div>
+
+  <script>
+    // ===== DOM refs =====
+    const chatBox   = document.getElementById('chat-box');
+    const chatInput = document.getElementById('chat-input');
+    const sendBtn   = document.getElementById('send-btn');
+
+    // ===== Config (간격/타이핑 효과 조절용) =====
+    const RENDER_INTERVAL_MS = 900; // 말풍선 간 간격
+    const TYPING_EFFECT      = true;
+    const TYPING_STEP        = 2;   // 타이핑 시 글자 단위
+    const TYPING_DELAY_MS    = 50;  // 타이핑 속도
+
+    // ===== 기본 출력 유틸 =====
+    function addMessage(text, sender) {
+      const msg = document.createElement('div');
+      msg.classList.add('message', sender);
+      msg.innerHTML = String(text).replace(/\n/g, "<br>");
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function addMessageTyping(text, sender) {
+      const msg = document.createElement('div');
+      msg.classList.add('message', sender);
+      chatBox.appendChild(msg);
+      let i = 0;
+      const plain = String(text);
+      while (i < plain.length) {
+        i += TYPING_STEP;
+        msg.innerHTML = plain.slice(0, i).replace(/\n/g, "<br>");
+        chatBox.scrollTop = chatBox.scrollHeight;
+        await sleep(TYPING_DELAY_MS);
+      }
+    }
+
+    function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+    // ===== AI 메시지 재생 큐 =====
+    const aiQueue = [];
+    let draining = false;
+
+    function enqueueAIMessages(lines) {
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed) aiQueue.push(trimmed);
+      }
+      if (!draining) drainQueue(); // 재생 시작
+    }
+
+    async function drainQueue() {
+      draining = true;
+      try {
+        while (aiQueue.length > 0) {
+          const next = aiQueue.shift();
+          if (TYPING_EFFECT) {
+            await addMessageTyping(next, 'ai');
+          } else {
+            addMessage(next, 'ai');
+          }
+          await sleep(RENDER_INTERVAL_MS);
+        }
+      } finally {
+        draining = false;
+      }
+    }
+
+    // ===== WebSocket 연결 =====
+    let ws;
+    let outboxQueue = []; // 연결 전에 보낼 사용자 메시지 임시 저장
+
+    function connect() {
+      ws = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host);
+
+      ws.onopen = () => {
+        if (outboxQueue.length) {
+          outboxQueue.forEach(m => ws.send(m));
+          outboxQueue = [];
+        }
+      };
+
+      ws.onmessage = (e) => {
+        const payload = typeof e.data === 'string' ? e.data : '';
+        if (!payload) return;
+
+        // 한 번에 도착한 긴 문자열이라도 줄 단위로 나눠 큐에 넣고,
+        // drainQueue()가 일정 간격으로 화면에 출력
+        const lines = payload.split(/\r?\n/);
+        enqueueAIMessages(lines);
+      };
+
+    }
+
+    // ===== 사용자 입력 처리 =====
+    function sendMessage() {
+      const userInput = chatInput.value.trim();
+      if (!userInput) return;
+      addMessage(userInput, 'user');
+      chatInput.value = '';
+
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(userInput);
+      } else {
+        outboxQueue.push(userInput);
+      }
+    }
+
+    chatInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        if (event.shiftKey) {
+          event.preventDefault();
+          const start = chatInput.selectionStart;
+          const end = chatInput.selectionEnd;
+          chatInput.value = chatInput.value.substring(0, start) + "\n" + chatInput.value.substring(end);
+          chatInput.selectionStart = chatInput.selectionEnd = start + 1;
+        } else {
+          event.preventDefault();
+          sendMessage();
+        }
+      }
+    });
+
+    sendBtn.addEventListener('click', sendMessage);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      connect();
+    });
+  </script>
+</body>
+</html>

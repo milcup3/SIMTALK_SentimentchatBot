@@ -1,0 +1,41 @@
+body {
+  min-height: 100vh;
+  background: radial-gradient(circle at 20% 30%, #a1c4fd 0%, #c2e9fb 50%, #fbc2eb 100%);
+  font-family: 'Noto Sans KR', 'Pretendard', 'Arial', sans-serif;
+  color: #333;
+}
+
+button {
+  background-color: #70a6c4;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #5a8dad;
+}
+
+.container {
+  width: 350px;
+  min-height: 480px;
+  margin: 80px auto;
+  padding: 30px 20px;
+  text-align: center;
+  background-color: #d5f7a7;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.container.chat-layout {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  height: 70vh;        /* 추가 */
+  max-height: 90vh;    /* 추가 */
+  overflow: hidden;    /* 전체 스크롤 방지 */
+}
