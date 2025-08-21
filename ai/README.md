@@ -67,10 +67,6 @@ streamlit run webui.py
 - 감성 랭커(HF) → GPT 재랭커/정서 스코어 (선택, 비용/지연 관리)  
 - 벡터DB(FAISS + LangChain) → NumPy 코사인 (의존성 최소화)
 
----
-SCT 기반
-python main.py --mode sct --sct_questions ..\sct_questions.jsonl --analysis_csv ..\Data\train.csv
-
 단순 챗봇 모드(편집 및 디버깅 모드)
 python main.py --mode naive
 

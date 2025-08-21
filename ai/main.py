@@ -400,7 +400,7 @@ def main():
                         raise SystemExit
                     elif verdict == "ESCALATE:DISTRESS":
                         print(DISTRESS_MSG)
-                        eval = input("상담사 연결을 원하시면 '상담사 연결'이라고 입력해주세요: ").strip()
+                        eval = input().strip()
                         if eval == "상담사 연결" or eval == "상담사연결":
 
                             print(SUPPORT_MSG)
@@ -473,14 +473,14 @@ def main():
         df = pd.read_csv(analysis_csv_path)
         if "Response" not in df.columns:
             raise RuntimeError(f"[오류] CSV에 'Response' 컬럼이 없습니다: {analysis_csv_path}")
-
+        print("\n최종 심리 분석 리포트를 생성 중입니다...")
         responses = df["Response"].dropna().astype(str).tolist()
         responses_small = mini_texts(responses)  # 400자 단위로 압축
 
         analysis_rag_db = MiniRAG(responses_small, client, embed_model)
 
         # 6) 리포트 생성/출력
-        print("\n최종 심리 분석 리포트를 생성 중입니다...")
+
         final_report = generate_final_report(
             conversation_history=conversation_history,
             user_info=user_info,
@@ -489,14 +489,14 @@ def main():
             gen_model=gen_model,
         )
 
-        print("\n[기본 정보]")
-        print(f"  - 이름: {user_info['name']}")
-        print(f"  - 나이: {user_info['age']}")
-        print(f"  - 성별: {user_info['gender']}")
+        #print("\n[기본 정보]")
+        #print(f"  - 이름: {user_info['name']}")
+        #print(f"  - 나이: {user_info['age']}")
+        #print(f"  - 성별: {user_info['gender']}")
         print(f"  - 선택 카테고리: {selected_category}\n")
-        print("[주요 키워드]")
+        #print("[주요 키워드]")
         print(f"  이번 대화에서 자주 언급한 키워드: {', '.join(final_report['top_keywords'])}\n")
-        print("[감정 트렌드]")
+        #print("[감정 트렌드]")
         # print(f"  감정 점수: {final_report['emotion_trend']}")
         print("[심리 해석 및 조언]")
         print(final_report["report_text"])

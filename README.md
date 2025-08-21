@@ -2,7 +2,7 @@
 
 감정 분석 및 멘탈 헬스 케어를 위한 AI 챗봇 프로젝트입니다.
 
-## 🚀 빠른 시작 (Quick Start)
+## 🚀 빠른 시작 (Quick Start) !! 경로 설정 유의 !!
 
 0. 저장소 클론
 	```bash
@@ -10,7 +10,7 @@
 	cd SimTok_SentimmentCareChatBot/project
 	```
 
-1) 의존성 설치
+1) 의존성 설치 (경로 설정 유의;ai Folder)
 ```bash
 pip install -r requirements.txt
 ```
@@ -157,7 +157,6 @@ python main.py --mode hyde
 ```
 
 =======
->>>>>>> 29eb11c (Initial commit: upload project files)
 ## 핵심 설계 원칙
 - OpenAI API only: 임베딩/생성/재랭킹 전부 OpenAI API로 통일
 - 토큰 상한 엄수: 질의/문맥/시스템합 1,600~2,000토큰 이내로 유지
@@ -177,6 +176,5 @@ python main.py --mode hyde
 단순 챗봇 모드(편집 및 디버깅 모드)
 python main.py --mode naive
 =======
->>>>>>> 29eb11c (Initial commit: upload project files)
 
 왜 써야 했는지(감정 트레이싱 및 RAG를 이용한 챗봇->질문 만들 때 신뢰도를 위해서)

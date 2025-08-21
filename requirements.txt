@@ -1,6 +1,0 @@
-python-dotenv
-openai>=1.40.0
-numpy
-pandas
-tqdm
-streamlit

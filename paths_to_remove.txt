@@ -1,8 +1,0 @@
-.env
-.env.example
-original/config.py
-__pycache__/
-faiss_index/
-index/
-Data/
-*.npz
