@@ -105,11 +105,6 @@ MIT License
 실행후 터미널에서 작동하는지 확인
 
 
-# OpenAI-only RAG Chatbot (Korean)
-
-이 프로젝트는 OpenAI API만 사용하여 작동하는 경량 RAG 챗봇입니다.  
-외부 프레임워크(예: LangChain, HF Transformers)를 사용하지 않으며, 임베딩/생성/재랭킹 모두 OpenAI API로만 수행합니다.
-
 ## 구성
 ```
 openai_only_chatbot/
