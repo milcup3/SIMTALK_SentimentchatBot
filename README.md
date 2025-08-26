@@ -28,6 +28,7 @@ AI 기반 감정 분석 및 멘탈 헬스케어 챗봇 프로젝트입니다.
 ---
 
 ## 📂 프로젝트 구조
+```bash
 project/
 ├── ai/ # 핵심 AI 로직
 │ ├── main.py
@@ -44,7 +45,7 @@ project/
 ├── server/ # Node.js API 서버
 │ └── server.js
 └── README.md
-
+```
 ---
 
 ## ⚡ 실행 방법
@@ -53,7 +54,7 @@ project/
 git clone https://github.com/<username>/SimTok_SentimentCareChatBot.git
 cd SimTok_SentimentCareChatBot/project
 pip install -r requirements.txt
-
+```
 .env 파일 생성
 OPENAI_API_KEY=sk-...
 EMBED_MODEL=text-embedding-3-small
@@ -70,7 +71,8 @@ node server.js
 브라우저에서 http://localhost:3000
  접속.
 
-📊 성과 및 결과물
+
+## 📊 성과 및 결과물
 
 대화 리포트 자동 생성 (요약·감정 추이·조언 포함)
 
@@ -82,11 +84,11 @@ RAG 검색 정확도 향상 (LLM 단독 대비 일관성 개선)
 
 “실제 상담 대비 초기 접근성 우수”라는 피드백 확보
 
-🎥 데모
+## 🎥 데모
 
 link https...
 
-🔮 향후 개선 방향
+## 🔮 향후 개선 방향
 
 사용자 집단 확장(대학생 → 직장인, 시니어)
 
@@ -94,11 +96,11 @@ link https...
 
 리포트 시각화 고도화 (키워드 클라우드, 감정 변화 그래프)
 
-👤 팀
+## 👤 팀
 
 김동현: 아이디어 기획, 백엔드/AI 모듈 구현, 데이터 파이프라인, 보고서·PPT 작성
 
 김현서: 프론트엔드 협업(UI), 발표 지원
 
-License
+## License
 MIT License
